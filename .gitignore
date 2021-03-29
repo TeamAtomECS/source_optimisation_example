@@ -1,0 +1,11 @@
+/target
+**/*.rs.bk
+**/*.txt
+**/*.dat
+**/*.json
+**/*.mat
+**/*.PREV
+**/*.avi
+**/*.png
+**/*.asv
+**/*.pdf
