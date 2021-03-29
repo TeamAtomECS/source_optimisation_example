@@ -5,7 +5,7 @@ cooling_beam_detuning = optimizableVariable('cooling_beam_detuning', [ -180 -15 
 quadrupole_gradient = optimizableVariable('quadrupole_gradient', [ 10 100 ]);
 vars = [ push_beam_power, push_beam_radius, push_beam_detuning, cooling_beam_detuning, quadrupole_gradient ];
 
-hours = 2;
+hours = 3;
 result = bayesopt(...
     @(x) asses(x), ...
     vars, ...
@@ -36,6 +36,7 @@ function score = asses(x)
 
 % Run the simulation for parameters.
 p = table2struct(x);
+p = mot.parse(p);
 mot.simulate(p);
 
 % Analyse trajectories, count atoms which were ejected by source.
@@ -45,6 +46,6 @@ for frame=output'
     captured = frame.vec(:,3) > 0.30;
     ids = unique([ids; frame.id(captured)]);
 end
-score = -length(ids);
+score = -double(length(ids))/double(p.atom_number);
 
 end
