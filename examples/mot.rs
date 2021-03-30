@@ -112,8 +112,6 @@ fn main() {
     let detuning = parameters.cooling_beam_detuning;
     let power = 0.23;
     let radius = parameters.cooling_beam_radius * 1.0e-3;
-    let polarisation11 = 1;
-    let polarisation10 = -1;
     world
         .create_entity()
         .with(GaussianBeam {
@@ -125,7 +123,7 @@ fn main() {
         .with(CoolingLight::for_species(
             AtomicTransition::strontium(),
             detuning,
-            polarisation11,
+            1,
         ))
         .build();
     world
@@ -139,7 +137,7 @@ fn main() {
         .with(CoolingLight::for_species(
             AtomicTransition::strontium(),
             detuning,
-            polarisation10,
+            1,
         ))
         .build();
     world
@@ -153,7 +151,7 @@ fn main() {
         .with(CoolingLight::for_species(
             AtomicTransition::strontium(),
             detuning,
-            polarisation10,
+            1,
         ))
         .build();
     world
@@ -167,7 +165,7 @@ fn main() {
         .with(CoolingLight::for_species(
             AtomicTransition::strontium(),
             detuning,
-            polarisation11,
+            1,
         ))
         .build();
 
@@ -244,7 +242,7 @@ fn main() {
     world.add_resource(ScatteringFluctuationsOption::On);
 
     // Run the simulation for a number of steps.
-    for _i in 0..8000 {
+    for _i in 0..15_000 {
         dispatcher.dispatch(&mut world.res);
         world.maintain();
     }

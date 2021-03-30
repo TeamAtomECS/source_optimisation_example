@@ -5,7 +5,20 @@ cooling_beam_detuning = optimizableVariable('cooling_beam_detuning', [ -180 -15 
 quadrupole_gradient = optimizableVariable('quadrupole_gradient', [ 10 100 ]);
 vars = [ push_beam_power, push_beam_radius, push_beam_detuning, cooling_beam_detuning, quadrupole_gradient ];
 
-hours = 3;
+% Table of initial conditions to start the optimisation with ok parameters.
+initial = [
+    11 4.7 -70 -81 63;
+    11 4.7 -70 -81 20;
+    11 4.7 -70 -81 40;
+    11 4.7 -70 -60 63;
+    11 4.7 -70 -60 20;
+    11 4.7 -70 -60 40;
+    ];
+        
+initial = array2table(initial);
+initial.Properties.VariableNames = {vars.Name};
+
+hours = 0.5;
 result = bayesopt(...
     @(x) asses(x), ...
     vars, ...
@@ -13,6 +26,7 @@ result = bayesopt(...
     'MaxTime', 60*60*hours, ...
     'MaxObjectiveEvaluations', inf, ...
     'OutputFcn', @saveToFile, ...
+    'InitialX', initial, ...
     'SaveFileName', 'optimot.mat');
 
 [best,val] = bestPoint(result);
@@ -25,9 +39,9 @@ saveas(gcf, 'result_2d.pdf');
 % Run best parameters
 
 params = table2struct(best);
-params.use_3d_quadrupole = false;
-mot.simulate(params);
-util.animate('SimulationRegion', [ -0.1 0.1; -0.1 0.1; -0.3 0.3 ], 'SaveVideo', 1);
+%mot.simulate(params);
+score = asses(best);
+utils.animate('SimulationRegion', [ -0.1 0.1; -0.1 0.1; -0.3 0.3 ], 'SaveVideo', 1);
 
 %% 
 % Define additional functions.
@@ -40,10 +54,10 @@ p = mot.parse(p);
 mot.simulate(p);
 
 % Analyse trajectories, count atoms which were ejected by source.
-output = util.read_output('pos.txt');
+output = utils.read_output('pos.txt');
 ids = [];
 for frame=output'
-    captured = frame.vec(:,3) > 0.30;
+    captured = frame.vec(:,3) > 0.25;
     ids = unique([ids; frame.id(captured)]);
 end
 score = -double(length(ids))/double(p.atom_number);
