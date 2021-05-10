@@ -6,6 +6,6 @@ Example showing integration of `atomecs` with matlab and use of matlab's optimis
 
 Clone the repository using
 ```
-git clone https://github.com/TeamAtomECS/matlab_examples --recurse-submodules
+git clone https://github.com/TeamAtomECS/source_optimisation_example --recurse-submodules
 ```
 then run `mot.optimise2D` to run the optimisation of a strontium source.
