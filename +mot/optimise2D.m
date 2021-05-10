@@ -18,7 +18,7 @@ initial = [
 initial = array2table(initial);
 initial.Properties.VariableNames = {vars.Name};
 
-hours = 0.5;
+hours = 1;
 result = bayesopt(...
     @(x) asses(x), ...
     vars, ...
@@ -38,10 +38,10 @@ saveas(gcf, 'result_2d.pdf');
 %%
 % Run best parameters
 
+load('result_2d.mat');
 params = table2struct(best);
-%mot.simulate(params);
 score = asses(best);
-utils.animate('SimulationRegion', [ -0.1 0.1; -0.1 0.1; -0.3 0.3 ], 'SaveVideo', 1);
+utils.animate('SimulationRegion', [ -0.1 0.1; -0.1 0.1; -0.3 0.3 ], 'SaveVideo', 0, 'AxisView', [ 0 0 ]);
 
 %% 
 % Define additional functions.
