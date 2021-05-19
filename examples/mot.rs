@@ -20,7 +20,7 @@ use lib::output::file::Text;
 use lib::shapes::Cuboid;
 use lib::sim_region::{SimulationVolume, VolumeType};
 use nalgebra::{Vector3};
-use specs::{Builder, World};
+use specs::prelude::*;
 use std::fs::read_to_string;
 use std::time::Instant;
 
@@ -83,7 +83,7 @@ fn main() {
     );
 
     let mut dispatcher = builder.build();
-    dispatcher.setup(&mut world.res);
+    dispatcher.setup(&mut world);
 
     // Create magnetic field.
     world
@@ -228,22 +228,22 @@ fn main() {
         .build();
 
     // Also use a velocity cap so that fast atoms are not even simulated.
-    world.add_resource(VelocityCap {
+    world.insert(VelocityCap {
         value: parameters.oven_velocity_cap,
     });
 
     // Define timestep
-    world.add_resource(Timestep { delta: 2.0e-6 });
+    world.insert(Timestep { delta: 2.0e-6 });
     
     // Add fluctuations
-    world.add_resource(EmissionForceOption::On(EmissionForceConfiguration {
+    world.insert(EmissionForceOption::On(EmissionForceConfiguration {
         explicit_threshold: 5,
     }));
-    world.add_resource(ScatteringFluctuationsOption::On);
+    world.insert(ScatteringFluctuationsOption::On);
 
     // Run the simulation for a number of steps.
     for _i in 0..15_000 {
-        dispatcher.dispatch(&mut world.res);
+        dispatcher.dispatch(&mut world);
         world.maintain();
     }
 
